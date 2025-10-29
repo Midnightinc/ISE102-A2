@@ -43,7 +43,7 @@ namespace ISEBank
             var transactionMenu = new SubMenuEntry("transaction", "Transaction Menu", () => loggedIn);
             transactionMenu.AddEntry(sendMoneyMenu);
             
-            var exitMenu = new SubMenuEntry("exit", "Exit", () => ShouldExit = true);
+            var exitMenu = new SubMenuEntry("exit", "Exit");
             
             var mainMenu = new SubMenuEntry("main", "Main Menu");
             mainMenu.AddEntry(userMenu);
