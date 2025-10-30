@@ -15,6 +15,19 @@ public class SubMenuEntry : MenuEntry
         entry.Parent = this;
     }
 
+    public void ValidateMenuStack()
+    {
+        foreach (var menuEntry in Entries)
+        {
+            var subMenuEntry = menuEntry as SubMenuEntry;
+            if (subMenuEntry != null)
+            {
+                subMenuEntry.Parent = this;
+                subMenuEntry.ValidateMenuStack();
+            }
+        }
+    }
+
     protected override void OnSelect()
     {
         while (handling && !App.ShouldExit)
@@ -41,7 +54,14 @@ public class SubMenuEntry : MenuEntry
 
             if (Parent != null)
             {
-                Console.WriteLine($"\n(back) Return to previous menu.");
+                if (selectedIndex == Entries.Count)
+                {
+                    Console.WriteLine($"-> Return to previous menu.");
+                }
+                else
+                {
+                    Console.WriteLine($"   Return to previous menu.");
+                }
             }
             
             //Console.Write("\nSelect an option: ");
@@ -51,17 +71,27 @@ public class SubMenuEntry : MenuEntry
             {
                 case ConsoleKey.UpArrow:
                     selectedIndex--;
-                    selectedIndex = Math.Clamp(selectedIndex, 0, Entries.Count - 1);
+                    selectedIndex = Math.Clamp(selectedIndex, 0, Entries.Count);
                     continue;
                     break;
                 case ConsoleKey.DownArrow:
                     selectedIndex++;
-                    selectedIndex = Math.Clamp(selectedIndex, 0, Entries.Count - 1);
+                    selectedIndex = Math.Clamp(selectedIndex, 0, Entries.Count);
                     continue;
                     break;
                 case ConsoleKey.Enter:
-                    Console.WriteLine("Enter Selected");
-                    ValidOptions[selectedIndex].Select();
+                    if (selectedIndex == Entries.Count)
+                    {
+                        handling = false;
+                    }
+                    else
+                    {
+                        var selectedEntry = ValidOptions[selectedIndex];
+                        selectedEntry.Select();
+                        if (selectedEntry is not ActionMenuEntry) continue;
+                        Console.WriteLine("\nPress any key to continue...");
+                        Console.ReadKey();
+                    }
                     continue;
                     break;
                 case ConsoleKey.Escape:

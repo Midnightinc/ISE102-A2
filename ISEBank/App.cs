@@ -55,6 +55,7 @@ namespace ISEBank
                 }
             };
             
+            mainMenu.ValidateMenuStack();
             mainMenu.Select();
         }
     }
