@@ -2,7 +2,9 @@
 
 public class SubMenuEntry : MenuEntry
 {
-    private List<MenuEntry> Entries { get; } = new List<MenuEntry>();
+    public List<MenuEntry> Entries { get; } = new List<MenuEntry>();
+    private int selectedIndex = 0;
+    private Dictionary<int, MenuEntry> ValidOptions = new Dictionary<int, MenuEntry>();
     public SubMenuEntry(string shortName, string description, Func<bool> conditionalDisplay = null) : base(shortName, description, conditionalDisplay)
     {
     }
@@ -20,20 +22,21 @@ public class SubMenuEntry : MenuEntry
             Console.Clear();
             Console.WriteLine($"--- {Description} ---\n");
 
-            
+            int i = 0;
+            ValidOptions.Clear();
             foreach (var child in Entries)
             {
                 if (child.ConditionalDisplay != null)
                 {
-                    if (child.ConditionalDisplay())
+                    if (!child.ConditionalDisplay())
                     {
-                        Console.WriteLine($"({child.ShortName}) {child.Description}");
+                        continue;
                     }
                 }
-                else
-                {
-                    Console.WriteLine($"({child.ShortName}) {child.Description}");
-                }
+                Console.Write(selectedIndex == i ? "-> " : "   ");
+                Console.WriteLine($"({child.ShortName}) {child.Description}");
+                ValidOptions.Add(i, child);
+                i++;
             }
 
             if (Parent != null)
@@ -41,9 +44,41 @@ public class SubMenuEntry : MenuEntry
                 Console.WriteLine($"\n(back) Return to previous menu.");
             }
             
-            Console.Write("\nSelect an option: ");
+            //Console.Write("\nSelect an option: ");
+            
+            var key = Console.ReadKey();
+            switch (key.Key)
+            {
+                case ConsoleKey.UpArrow:
+                    selectedIndex--;
+                    selectedIndex = Math.Clamp(selectedIndex, 0, Entries.Count - 1);
+                    continue;
+                    break;
+                case ConsoleKey.DownArrow:
+                    selectedIndex++;
+                    selectedIndex = Math.Clamp(selectedIndex, 0, Entries.Count - 1);
+                    continue;
+                    break;
+                case ConsoleKey.Enter:
+                    Console.WriteLine("Enter Selected");
+                    ValidOptions[selectedIndex].Select();
+                    continue;
+                    break;
+                case ConsoleKey.Escape:
+                    Console.WriteLine("Escaped");
+                    handling = false;
+                    continue;
+                    break;
+                default:
+                    Console.Clear();
+                    Console.WriteLine("Invalid selection. Please try again.");
+                    Console.ReadKey();
+                    continue;
+                    break;
+            }
 
-            var input = Console.ReadLine()?.Trim().ToLower();
+            //var input = Console.ReadLine()?.Trim().ToLower();
+            var input = "";
 
             if (input == "back" && Parent != null)
             {
@@ -51,6 +86,7 @@ public class SubMenuEntry : MenuEntry
             }
             else
             {
+                
                 var selectedEntry = Entries.FirstOrDefault(e => e.ShortName.ToLower() == input);
 
                 if (selectedEntry != null)
