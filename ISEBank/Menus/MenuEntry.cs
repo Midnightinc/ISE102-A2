@@ -1,6 +1,5 @@
 ﻿namespace ISEBank.Menus;
 
-
 public abstract class MenuEntry
 {
     public bool handling = true;

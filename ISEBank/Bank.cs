@@ -6,6 +6,31 @@ namespace ISEBank
     internal class Bank
     {
         readonly static Random random = new((int)DateTime.UtcNow.Ticks);
+        static List<User> bankUsers = [new("JoeDoe", "Password123")];
+        public const int lockOutMinutes = 15;
+
+        public static bool Login(string username, string password)
+        {
+            if (UsernameCheck(username, out User? foundUser))
+            {
+                return PasswordCheck(password, foundUser);
+            }
+            else return false;
+        }
+
+        private static bool UsernameCheck(string username, out User? foundUser)
+        {
+            if (bankUsers?.Count > 0)
+            {
+                foundUser = bankUsers.Find(x => x.Username.ToLower().Equals(username.ToLower()));
+                return (foundUser != null);
+            }
+            else
+            {
+                foundUser = null;
+                return false;
+            }
+        }
 
         private static bool PasswordCheck(string passwordEntered, User user)
         {

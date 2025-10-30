@@ -73,12 +73,10 @@ public class SubMenuEntry : MenuEntry
                     selectedIndex--;
                     selectedIndex = Math.Clamp(selectedIndex, 0, Entries.Count);
                     continue;
-                    break;
                 case ConsoleKey.DownArrow:
                     selectedIndex++;
                     selectedIndex = Math.Clamp(selectedIndex, 0, Entries.Count);
                     continue;
-                    break;
                 case ConsoleKey.Enter:
                     if (selectedIndex == Entries.Count)
                     {
@@ -93,18 +91,15 @@ public class SubMenuEntry : MenuEntry
                         Console.ReadKey();
                     }
                     continue;
-                    break;
                 case ConsoleKey.Escape:
                     Console.WriteLine("Escaped");
                     handling = false;
                     continue;
-                    break;
                 default:
                     Console.Clear();
                     Console.WriteLine("Invalid selection. Please try again.");
                     Console.ReadKey();
                     continue;
-                    break;
             }
 
             //var input = Console.ReadLine()?.Trim().ToLower();
